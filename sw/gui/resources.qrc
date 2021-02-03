@@ -1,0 +1,30 @@
+<RCC>
+    <qresource prefix="/">
+        <file>bitmaps/bulb_off.svg</file>
+        <file>bitmaps/bulb_on.svg</file>
+        <file>bitmaps/calendar.svg</file>
+        <file>bitmaps/cancel.svg</file>
+        <file>bitmaps/clock.svg</file>
+        <file>bitmaps/connection_off.svg</file>
+        <file>bitmaps/connection_on.svg</file>
+        <file>bitmaps/electricity_off.svg</file>
+        <file>bitmaps/electricity_on.svg</file>
+        <file>bitmaps/humidity.svg</file>
+        <file>bitmaps/led_off.svg</file>
+        <file>bitmaps/led_on.svg</file>
+        <file>bitmaps/move_sensor_off.svg</file>
+        <file>bitmaps/move_sensor_on.svg</file>
+        <file>bitmaps/rain.svg</file>
+        <file>bitmaps/sad_face.svg</file>
+        <file>bitmaps/snowflake.svg</file>
+        <file>bitmaps/sun.svg</file>
+        <file>bitmaps/thermometer.svg</file>
+        <file>bitmaps/water_off.svg</file>
+        <file>bitmaps/water_on.svg</file>
+        <file>bitmaps/fan_off.svg</file>
+        <file>bitmaps/fan_on.svg</file>
+        <file>bitmaps/cmd.svg</file>
+        <file>bitmaps/settings.svg</file>
+        <file>bitmaps/charts.svg</file>
+    </qresource>
+</RCC>

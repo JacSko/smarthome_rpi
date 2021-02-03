@@ -57,7 +57,7 @@ add_executable(smarthome_rpi
     sw/main_window/source/main_window.cpp
     sw/main_window/include/main_window.h
     sw/main.cpp
-   #resources.qrc
+    sw/gui/resources.qrc
 )
 target_include_directories(smarthome_rpi PUBLIC
 	sw/main_window/include
