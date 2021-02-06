@@ -2,6 +2,7 @@
  *   Includes of project headers
  * =============================*/
 #include "SocketDriver.h"
+#include "Logger.h"
 /* =============================
  *   Includes of common headers
  * =============================*/
@@ -11,7 +12,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <algorithm>
-
+#include <string.h>
 
 /* namespace wrapper around system function to allow replace in unit tests */
 namespace system_call
@@ -54,16 +55,18 @@ m_sock_fd(0)
 bool SocketDriver::connect(const std::string& ip_address, uint16_t port)
 {
    bool result = false;
-
+   logger_send(LOG_SOCKDRV, __func__, "");
    do
    {
       if (ip_address.empty() || port == 0)
       {
+         logger_send(LOG_ERROR, __func__, "invalid data %s:%d", ip_address.c_str(), port);
          break;
       }
       m_sock_fd = system_call::socket(AF_INET, SOCK_STREAM, 0);
       if (m_sock_fd < 0)
       {
+         logger_send(LOG_ERROR, __func__, "cannot create socket, err: %s", strerror(errno));
          break;
       }
 
@@ -73,12 +76,13 @@ bool SocketDriver::connect(const std::string& ip_address, uint16_t port)
 
       if(inet_pton(AF_INET, ip_address.c_str(), &serv_addr.sin_addr)<=0)
       {
-         std::cout << "wrong ip\n";
-          break;
+         logger_send(LOG_ERROR, __func__, "cannot convert %s", ip_address.c_str());
+         break;
       }
 
       if(system_call::connect(m_sock_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) >= 0)
       {
+
          m_server_address = ip_address;
          m_server_port = port;
          m_thread = std::thread(&SocketDriver::threadExecute, this);
@@ -86,12 +90,14 @@ bool SocketDriver::connect(const std::string& ip_address, uint16_t port)
          notify_callbacks(DriverEvent::DRIVER_CONNECTED, {}, 0);
          while(!m_thread_running);
          result = true;
+         logger_send(LOG_SOCKDRV, __func__, "connected ok!");
       }
 
    }while(0);
 
    if (!result)
    {
+      logger_send(LOG_ERROR, __func__, "error");
       disconnect();
    }
 
@@ -103,6 +109,7 @@ void SocketDriver::threadExecute()
    m_recv_buffer_size = 0;
    int bytes_count = 0;
    m_thread_running = true;
+   logger_send(LOG_SOCKDRV, __func__, "starting thread!");
    while(m_thread_running)
    {
       bytes_count = system_call::recv(m_sock_fd, &m_recv_buffer[0] + m_recv_buffer_size, SOCKDRV_RECV_BUFFER_SIZE, 0);
@@ -119,6 +126,7 @@ void SocketDriver::threadExecute()
       }
       else
       {
+         logger_send(LOG_ERROR, __func__, "socket error: %s", strerror(errno));
          notify_callbacks(DriverEvent::DRIVER_DISCONNECTED, {}, 0);
          m_thread_running = false;
          system_call::close(m_sock_fd);
@@ -136,6 +144,7 @@ void SocketDriver::notify_callbacks(DriverEvent ev, const std::vector<uint8_t>& 
 }
 bool SocketDriver::disconnect()
 {
+   logger_send(LOG_ERROR, __func__, "");
    bool result = false;
    if (m_thread.joinable())
    {
@@ -168,6 +177,7 @@ bool SocketDriver::write(const std::vector<uint8_t>& data, size_t size)
 {
    bool result = false;
    ssize_t bytes_to_write = size == 0? data.size() : size;
+   logger_send(LOG_SOCKDRV, __func__, "writing %u bytes", size);
    if (bytes_to_write <= SOCKDRV_MAX_RW_SIZE)
    {
       ssize_t bytes_written = 0;
@@ -189,11 +199,13 @@ bool SocketDriver::write(const std::vector<uint8_t>& data, size_t size)
          bytes_to_write -= bytes_written;
       }
    }
+   logger_send_if(!result, LOG_ERROR, __func__, "cannot write %u bytes", size);
    return result;
 }
 void SocketDriver::setDelimiter(char c)
 {
    std::lock_guard<std::mutex> lock (m_mutex);
+   logger_send(LOG_SOCKDRV, __func__, "Setting new delimiter: %x", c);
    m_delimiter = c;
 }
 SocketDriver::~SocketDriver()

@@ -9,6 +9,9 @@ target_include_directories(SocketDriver PUBLIC
 	public/
 	include/
 )
+target_link_libraries(SocketDriver PUBLIC
+	Logger
+)
 
 else()
 

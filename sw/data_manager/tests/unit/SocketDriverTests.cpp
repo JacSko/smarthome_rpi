@@ -6,6 +6,7 @@
    friend class SocketDriverFixture;
 
 #include "SocketDriver.h"
+#include "logger_mock.hpp"
 #include <sys/socket.h>
 /* ============================= */
 /**
@@ -41,6 +42,7 @@ struct SocketDriverFixture : public testing::Test
 {
    void SetUp()
    {
+      mock_logger_init();
       sys_call_mock = new SystemCallMock;
       m_test_subject.reset(new SocketDriver());
    }
@@ -48,6 +50,7 @@ struct SocketDriverFixture : public testing::Test
    {
       m_test_subject.reset(nullptr);
       delete sys_call_mock;
+      mock_logger_deinit();
    }
    ListenerMock listener_mock;
    std::unique_ptr<ISocketDriver> m_test_subject;

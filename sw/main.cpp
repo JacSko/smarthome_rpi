@@ -1,4 +1,3 @@
-#include <iostream>
 #include "main_window.h"
 #include "QtWidgets/QApplication"
 
@@ -10,6 +9,5 @@ int main(int argc, char *argv[])
 
    a.exec();
 
-   std::cout << "Hello World\n" << std::endl;
    return 1;
 }

@@ -10,6 +10,7 @@ target_include_directories(SocketDriverTests PUBLIC
 target_link_libraries(SocketDriverTests PUBLIC
         gtest_main
         gmock_main
+        loggerMock
 )
 
 add_test(NAME SocketDriverTests COMMAND SocketDriverTests)

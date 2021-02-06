@@ -78,6 +78,7 @@ if (NOT UNIT_TESTS)
 	)
 	target_link_libraries(smarthome_test 
 		SocketDriver
+		Logger
 		pthread
 		)		
 		
@@ -89,6 +90,19 @@ else()
 		)
 	add_subdirectory(ext_libs/googletest)
 	enable_testing()
+if (LOGGER_DISABLE_OUTPUT)
+	add_definitions(-DLOGGER_DISABLE_OUTPUT)
+endif()
+
 endif()
 
 add_subdirectory(sw/data_manager)
+add_subdirectory(sw/logger)
+
+
+
+
+
+
+
+
