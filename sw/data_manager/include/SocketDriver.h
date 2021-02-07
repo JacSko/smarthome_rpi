@@ -47,7 +47,7 @@ private:
 
    std::string m_server_address;
    uint16_t m_server_port;
-   bool m_is_connected;
+   std::atomic<bool> m_is_connected;
    char m_delimiter;
    std::vector<uint8_t> m_recv_buffer;
    size_t m_recv_buffer_size;

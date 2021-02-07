@@ -22,7 +22,6 @@
  * =============================*/
 #include <string>
 
-
 class IDataProvider
 {
 public:
@@ -44,7 +43,7 @@ public:
     * @brief Returns current status.
     * @return True if module is running, otherwise false.
     */
-   virtual bool isRunning() = 0;
+   virtual bool isConnected() = 0;
 
    virtual ~IDataProvider(){};
 };

@@ -77,7 +77,7 @@ if (NOT UNIT_TESTS)
 		
 	)
 	target_link_libraries(smarthome_test 
-		SocketDriver
+		DataProvider
 		Logger
 		pthread
 		)		
@@ -98,6 +98,9 @@ endif()
 
 add_subdirectory(sw/data_manager)
 add_subdirectory(sw/logger)
+add_subdirectory(sw/main_window)
+add_subdirectory(sw/SmartHomeTypes)
+
 
 
 

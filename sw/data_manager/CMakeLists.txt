@@ -13,6 +13,21 @@ target_link_libraries(SocketDriver PUBLIC
 	Logger
 )
 
+
+add_library(DataProvider
+	source/DataProvider.cpp
+)
+target_include_directories(DataProvider PUBLIC
+	public/
+	include/
+)
+target_link_libraries(DataProvider PUBLIC
+	SocketDriver
+	Logger
+	MainWindowIf
+	SmartHomeTypes
+)
+
 else()
 
 	add_subdirectory(tests)

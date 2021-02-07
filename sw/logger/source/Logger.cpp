@@ -34,7 +34,8 @@ typedef struct LOG_GROUP
 std::vector<char> m_logger_buffer;
 LOG_GROUP LOGGER_GROUPS[LOG_ENUM_MAX] = {
       {LOGGER_GROUP_ENABLE, LOG_ERROR,   "ERROR"   },
-      {LOGGER_GROUP_ENABLE, LOG_SOCKDRV, "SOCKDRV" } };
+      {LOGGER_GROUP_ENABLE, LOG_SOCKDRV, "SOCKDRV" },
+      {LOGGER_GROUP_ENABLE, LOG_DATAPROV, "DATAPROV"}};
 
 void logger_initialize()
 {

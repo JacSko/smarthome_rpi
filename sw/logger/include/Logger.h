@@ -36,6 +36,7 @@ enum LogGroup
 {
    LOG_ERROR,         /**< Channel for error logs */
    LOG_SOCKDRV,       /**< Logs from socket driver */
+   LOG_DATAPROV,      /**< Logs from data provider */
    LOG_ENUM_MAX,
 };
 
