@@ -16,6 +16,7 @@ const uint16_t DRV_CONN_RETRY_PERIOD = 10000;
 DataProvider::DataProvider(IMainWindowWrapper& main_window) :
 m_main_window(main_window),
 m_driver(new SocketDriver()),
+m_thread_running(false),
 m_port(0)
 {
 }
@@ -176,7 +177,6 @@ bool DataProvider::disconnect_driver()
 }
 DataProvider::~DataProvider()
 {
-   disconnect_driver();
    if (m_thread_running)
    {
       m_thread_running = false;
@@ -185,4 +185,5 @@ DataProvider::~DataProvider()
          m_thread.join();
       }
    }
+   disconnect_driver();
 }

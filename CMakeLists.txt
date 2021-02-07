@@ -62,9 +62,11 @@ if (NOT UNIT_TESTS)
 	)
 	target_include_directories(smarthome_rpi PUBLIC
 		sw/main_window/include
+		sw/main_window/public
 	)
 	target_link_libraries(smarthome_rpi 
 		Qt5::Widgets
+		SmartHomeTypes
 		pthread
 		)
 	#########################################
@@ -72,13 +74,21 @@ if (NOT UNIT_TESTS)
 	#########################################
 	add_executable(smarthome_test
 	    sw/main_test.cpp
+	    sw/gui/main_window.ui
+	    sw/main_window/source/main_window.cpp
+	    sw/main_window/include/main_window.h
+	    sw/gui/resources.qrc
 	)
 	target_include_directories(smarthome_test PUBLIC
-		
+		sw/main_window/include
+		sw/main_window/public
 	)
 	target_link_libraries(smarthome_test 
-		DataProvider
+	    Qt5::Widgets
+	    Qt5::Core
 		Logger
+		SmartHomeTypes
+		DataProvider
 		pthread
 		)		
 		

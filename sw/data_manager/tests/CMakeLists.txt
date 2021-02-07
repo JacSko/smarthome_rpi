@@ -14,3 +14,23 @@ target_link_libraries(SocketDriverTests PUBLIC
 )
 
 add_test(NAME SocketDriverTests COMMAND SocketDriverTests)
+
+
+
+
+
+
+
+
+
+
+
+
+add_library(SocketDriverMock STATIC
+			mocks/SocketDriverMock.h
+)
+target_include_directories(SocketDriverMock PUBLIC
+            mocks
+            ../include
+)
+set_target_properties(SocketDriverMock PROPERTIES LINKER_LANGUAGE CXX)

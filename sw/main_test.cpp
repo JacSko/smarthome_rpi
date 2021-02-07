@@ -1,30 +1,21 @@
-#include <iostream>
-#include "SocketDriver.h"
+#include "main_window.h"
+#include "QtWidgets/QApplication"
+#include "DataProvider.h"
 #include "Logger.h"
 
-class Callback : public SocketListener
+int main(int argc, char *argv[])
 {
-public:
-   void onSocketEvent(DriverEvent ev, const std::vector<uint8_t>& data, size_t size)
-   {
-      std::cout << "got event " << (int)ev << ", size " << size <<std::endl;
-   }
-};
-
-
-int main()
-{
+   /* TODO load settings from file */
    logger_initialize();
 
-   Callback callback;
-   std::vector<uint8_t> test_data = {31,32,33,34,35,36, '\n'};
-   std::unique_ptr<ISocketDriver> driver(new SocketDriver());
+   QApplication a(argc, argv);
+   MainWindow w;
+   std::unique_ptr<IDataProvider> data_provider(new DataProvider(w));
+   data_provider->run("127.0.0.1", 2222, '\n');
 
-   driver->connect("127.0.0.1", 2222);
-   driver->addListener(&callback);
-   while(1)
-   {
-   }
+   w.show();
 
+   a.exec();
 
+   return 1;
 }
