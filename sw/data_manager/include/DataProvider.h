@@ -52,7 +52,7 @@ private:
    IMainWindowWrapper& m_main_window;
    std::string m_server_address;
    uint16_t m_port;
-   char m_delimiter = '\n';
+   char m_delimiter;
    ISocketDriver& m_driver;
    std::atomic<bool> m_thread_running;
    std::thread m_thread;

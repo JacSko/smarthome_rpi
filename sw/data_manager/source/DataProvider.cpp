@@ -11,7 +11,7 @@
  * =============================*/
 
 /* period between next connection attempts */
-const uint16_t DRV_CONN_RETRY_PERIOD = 100;
+const uint16_t DRV_CONN_RETRY_PERIOD = 5000;
 
 namespace thread
 {
@@ -23,6 +23,7 @@ __attribute__((weak)) void sleep (std::chrono::milliseconds ms)
 DataProvider::DataProvider(IMainWindowWrapper& main_window, ISocketDriver& driver) :
 m_main_window(main_window),
 m_port(0),
+m_delimiter('\n'),
 m_driver(driver),
 m_thread_running(false)
 {
