@@ -15,15 +15,15 @@ MainWindow::MainWindow(QWidget *parent)
                      this, SLOT(updateFanState(FAN_STATE)));
 }
 
-bool MainWindow::setEnvState (ENV_ITEM_ID id, int8_t temp_h, int8_t temp_l, uint8_t hum_h, uint8_t hum_l)
+void MainWindow::setEnvState (ENV_ITEM_ID id, int8_t temp_h, int8_t temp_l, uint8_t hum_h, uint8_t hum_l)
 {
    emit requestEnvUpdate(id, temp_h, temp_l, hum_h, hum_l);
 }
-bool MainWindow::setInputState(INPUT_ID id, INPUT_STATE state)
+void MainWindow::setInputState(INPUT_ID id, INPUT_STATE state)
 {
    emit requestInputUpdate(id, state);
 }
-bool MainWindow::setFanState(FAN_STATE state)
+void MainWindow::setFanState(FAN_STATE state)
 {
    emit requestFanUpdate(state);
 }

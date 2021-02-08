@@ -19,9 +19,9 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    bool setEnvState (ENV_ITEM_ID id, int8_t temp_h, int8_t temp_l, uint8_t hum_h, uint8_t hum_l);
-    bool setInputState(INPUT_ID id, INPUT_STATE state);
-    bool setFanState(FAN_STATE state);
+    void setEnvState (ENV_ITEM_ID id, int8_t temp_h, int8_t temp_l, uint8_t hum_h, uint8_t hum_l);
+    void setInputState(INPUT_ID id, INPUT_STATE state);
+    void setFanState(FAN_STATE state);
 
 signals:
    void requestEnvUpdate(ENV_ITEM_ID id, int8_t temp_h, int8_t temp_l, uint8_t hum_h, uint8_t hum_l);

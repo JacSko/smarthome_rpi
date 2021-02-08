@@ -8,9 +8,9 @@
 class MainWindowWrapperMock : public IMainWindowWrapper
 {
 public:
-   MOCK_METHOD5(setEnvState, bool(ENV_ITEM_ID, int8_t, int8_t, uint8_t, uint8_t));
-   MOCK_METHOD2(setInputState, bool(INPUT_ID, INPUT_STATE));
-   MOCK_METHOD1(setFanState, bool(FAN_STATE));
+   MOCK_METHOD5(setEnvState, void(ENV_ITEM_ID, int8_t, int8_t, uint8_t, uint8_t));
+   MOCK_METHOD2(setInputState, void(INPUT_ID, INPUT_STATE));
+   MOCK_METHOD1(setFanState, void(FAN_STATE));
 
 };
 
