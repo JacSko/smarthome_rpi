@@ -32,30 +32,28 @@ class DataProvider : public IDataProvider, public SocketListener
 {
 
 public:
-   DataProvider(IMainWindowWrapper& main_window);
+   DataProvider(IMainWindowWrapper& main_window, ISocketDriver& driver);
    ~DataProvider();
 private:
    /* IDataProvider */
    bool run (const std::string& ip_address, uint16_t port, char c) override;
-   bool stop() override;
+   void stop() override;
    bool isConnected() override;
 
    /* SocketListener */
    void onSocketEvent(DriverEvent ev, const std::vector<uint8_t>& data, size_t size) override;
 
    void executeThread();
-   bool disconnect_driver();
    void parse_message(const std::vector<uint8_t>& data, size_t size);
    bool parse_env_event(const std::vector<uint8_t>& data, size_t size);
    bool parse_input_event(const std::vector<uint8_t>& data, size_t size);
    bool parse_fan_event(const std::vector<uint8_t>& data, size_t size);
 
-
+   IMainWindowWrapper& m_main_window;
    std::string m_server_address;
    uint16_t m_port;
    char m_delimiter = '\n';
-   IMainWindowWrapper& m_main_window;
-   std::unique_ptr<ISocketDriver> m_driver;
+   ISocketDriver& m_driver;
    std::atomic<bool> m_thread_running;
    std::thread m_thread;
    std::mutex m_mtx;

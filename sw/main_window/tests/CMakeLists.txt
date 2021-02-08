@@ -4,5 +4,6 @@ add_library(MainWindowWrapperMock STATIC
 target_include_directories(MainWindowWrapperMock PUBLIC
             mocks
             ../include
+            ../public
 )
 set_target_properties(MainWindowWrapperMock PROPERTIES LINKER_LANGUAGE CXX)

@@ -36,9 +36,9 @@ public:
    virtual bool run (const std::string& ip_address, uint16_t port, char c) = 0;
    /**
     * @brief Stops execution of DataProvider.
-    * @return True if stopped, otherwise false.
+    * @return None.
     */
-   virtual bool stop() = 0;
+   virtual void stop() = 0;
    /**
     * @brief Returns current status.
     * @return True if module is running, otherwise false.

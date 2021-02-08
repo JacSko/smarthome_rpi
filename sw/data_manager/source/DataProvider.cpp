@@ -11,13 +11,20 @@
  * =============================*/
 
 /* period between next connection attempts */
-const uint16_t DRV_CONN_RETRY_PERIOD = 10000;
+const uint16_t DRV_CONN_RETRY_PERIOD = 100;
 
-DataProvider::DataProvider(IMainWindowWrapper& main_window) :
+namespace thread
+{
+__attribute__((weak)) void sleep (std::chrono::milliseconds ms)
+{
+   std::this_thread::sleep_for(ms);
+}
+}
+DataProvider::DataProvider(IMainWindowWrapper& main_window, ISocketDriver& driver) :
 m_main_window(main_window),
-m_driver(new SocketDriver()),
-m_thread_running(false),
-m_port(0)
+m_port(0),
+m_driver(driver),
+m_thread_running(false)
 {
 }
 
@@ -31,8 +38,8 @@ bool DataProvider::run(const std::string& ip_address, uint16_t port, char c)
       m_server_address = ip_address;
       m_port = port;
       m_delimiter = c;
-      m_driver->setDelimiter(c);
-      m_driver->addListener(this);
+      m_driver.setDelimiter(c);
+      m_driver.addListener(this);
       m_thread = std::thread(&DataProvider::executeThread, this);
       while(!m_thread_running);
       result = true;
@@ -47,9 +54,9 @@ void DataProvider::executeThread()
 
    while(m_thread_running)
    {
-      if (!m_driver->isConnected())
+      if (!m_driver.isConnected())
       {
-         if (m_driver->connect(m_server_address, m_port))
+         if (m_driver.connect(m_server_address, m_port))
          {
             logger_send(LOG_DATAPROV, __func__, "connected");
          }
@@ -58,23 +65,20 @@ void DataProvider::executeThread()
             logger_send(LOG_DATAPROV, __func__, "retry");
          }
       }
-      std::this_thread::sleep_for(std::chrono::milliseconds(DRV_CONN_RETRY_PERIOD));
+      thread::sleep(std::chrono::milliseconds(DRV_CONN_RETRY_PERIOD));
    }
 
    return;
 }
 void DataProvider::onSocketEvent(DriverEvent ev, const std::vector<uint8_t>& data, size_t size)
 {
+   logger_send(LOG_DATAPROV, __func__, "sockdrv ev %u", (uint8_t)ev);
    switch(ev)
    {
-   case DriverEvent::DRIVER_CONNECTED:
-      logger_send(LOG_DATAPROV, __func__, "sockdrv connected ev");
-      break;
-   case DriverEvent::DRIVER_DISCONNECTED:
-      logger_send(LOG_DATAPROV, __func__, "sockdrv disconnected ev");
-      break;
    case DriverEvent::DRIVER_DATA_RECV:
       parse_message(data, size);
+      break;
+   default:
       break;
    }
 }
@@ -130,7 +134,7 @@ bool DataProvider::parse_input_event(const std::vector<uint8_t>& data, size_t si
    bool result = false;
    logger_send(LOG_DATAPROV, __func__, "got env event");
    if ((NTF_REQ_TYPE)data[NTF_GROUP_REQ_TYPE_OFFSET] == NTF_NTF &&
-       (NTF_ENV_SUBCMDS)data[NTF_GROUP_SUBCMD_OFFSET] == NTF_INPUTS_STATE)
+       (NTF_INPUTS_SUBCMDS)data[NTF_GROUP_SUBCMD_OFFSET] == NTF_INPUTS_STATE)
    {
       INPUT_ID id = (INPUT_ID) data[NTF_HEADER_SIZE];
       INPUT_STATE state = (INPUT_STATE) data[NTF_HEADER_SIZE + 1];
@@ -145,7 +149,7 @@ bool DataProvider::parse_fan_event(const std::vector<uint8_t>& data, size_t size
    bool result = false;
    logger_send(LOG_DATAPROV, __func__, "fan ev recevied");
    if ((NTF_REQ_TYPE)data[NTF_GROUP_REQ_TYPE_OFFSET] == NTF_NTF &&
-       (NTF_ENV_SUBCMDS)data[NTF_GROUP_SUBCMD_OFFSET] == NTF_FAN_STATE)
+       (NTF_FAN_SUBCMDS)data[NTF_GROUP_SUBCMD_OFFSET] == NTF_FAN_STATE)
    {
       FAN_STATE state = (FAN_STATE) data[NTF_HEADER_SIZE];
       logger_send(LOG_DATAPROV, __func__, "fan state %u", state);
@@ -154,26 +158,15 @@ bool DataProvider::parse_fan_event(const std::vector<uint8_t>& data, size_t size
    }
    return result;
 }
-bool DataProvider::stop()
+void DataProvider::stop()
 {
-   return disconnect_driver();
+   logger_send(LOG_DATAPROV, __func__, "disconnecting");
+   m_driver.disconnect();
+   m_driver.removeListener(this);
 }
 bool DataProvider::isConnected()
 {
-   return m_driver->isConnected();
-}
-bool DataProvider::disconnect_driver()
-{
-   bool result = false;
-   logger_send(LOG_DATAPROV, __func__, "disconnecting");
-   if (m_driver->isConnected())
-   {
-      m_driver->disconnect();
-      m_driver->removeListener(this);
-      result = true;
-   }
-
-   return result;
+   return m_driver.isConnected();
 }
 DataProvider::~DataProvider()
 {
@@ -185,5 +178,5 @@ DataProvider::~DataProvider()
          m_thread.join();
       }
    }
-   disconnect_driver();
+   stop();
 }

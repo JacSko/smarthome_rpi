@@ -94,7 +94,7 @@ if (NOT UNIT_TESTS)
 		
 else()
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-	set(CMAKE_CXX_FLAGS "-g -O0 -Wall -fprofile-arcs -ftest-coverage -fPIC")
+	set(CMAKE_CXX_FLAGS "-g -O0 -Wall -fno-exceptions -fprofile-arcs -ftest-coverage -fPIC")
 	add_definitions(
 		-DUNIT_TESTS
 		)
