@@ -26,6 +26,7 @@ target_link_libraries(DataProvider PUBLIC
 	Logger
 	MainWindowIf
 	SmartHomeTypes
+	pthread
 )
 
 else()

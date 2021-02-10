@@ -29,6 +29,13 @@ endif()
 set (QT_RPI_LIBRARIES_PATH "/home/jskowronek/raspi/qt5pi")
 set (RPI_TOOLCHAIN_PATH "/opt/cross-pi-gcc/bin/")
 
+#########################################
+#	QT package is required to run app
+#########################################
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
 if (NOT UNIT_TESTS)
 	#########################################
@@ -41,14 +48,6 @@ if (NOT UNIT_TESTS)
 		set(CMAKE_LINKER       ${RPI_TOOLCHAIN_PATH}/arm-linux-gnueabihf-ld CACHE PATH "" FORCE)
 	endif()
 	
-	
-	#########################################
-	#	QT package is required to run app
-	#########################################
-	set(CMAKE_AUTOMOC ON)
-	set(CMAKE_AUTORCC ON)
-	set(CMAKE_AUTOUIC ON)
-	find_package(Qt5 COMPONENTS Widgets REQUIRED)
 	
 	#########################################
 	#	Main executable
@@ -68,29 +67,10 @@ if (NOT UNIT_TESTS)
 		Qt5::Widgets
 		SmartHomeTypes
 		pthread
-		)
-	#########################################
-	#	TEST executable
-	#########################################
-	add_executable(smarthome_test
-	    sw/main_test.cpp
-	    sw/gui/main_window.ui
-	    sw/main_window/source/main_window.cpp
-	    sw/main_window/include/main_window.h
-	    sw/gui/resources.qrc
-	)
-	target_include_directories(smarthome_test PUBLIC
-		sw/main_window/include
-		sw/main_window/public
-	)
-	target_link_libraries(smarthome_test 
-	    Qt5::Widgets
-	    Qt5::Core
 		Logger
-		SmartHomeTypes
 		DataProvider
-		pthread
-		)		
+		SocketDriver
+		)
 		
 else()
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
