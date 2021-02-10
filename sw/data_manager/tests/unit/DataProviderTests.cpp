@@ -175,7 +175,7 @@ TEST_F(DataProviderSocketListenerFixture, messasge_integrity_check_tests)
     * ************************************************
     */
    EXPECT_CALL(m_window_mock, setFanState(_)).Times(0);
-   test_bytes[NTF_GROUP_BYTES_COUNT_OFFSET] = PAYLOAD_SIZE + 1;
+   test_bytes[NTF_BYTES_COUNT_OFFSET] = PAYLOAD_SIZE + 1;
    m_test_subject->onSocketEvent(DriverEvent::DRIVER_DATA_RECV, test_bytes, DEFAULT_MESSAGE_SIZE);
 
    /**
@@ -184,8 +184,8 @@ TEST_F(DataProviderSocketListenerFixture, messasge_integrity_check_tests)
     * ************************************************
     */
    EXPECT_CALL(m_window_mock, setFanState(_)).Times(0);
-   test_bytes[NTF_GROUP_BYTES_COUNT_OFFSET] = PAYLOAD_SIZE;
-   test_bytes[NTF_GROUP_OFFSET] = 0;
+   test_bytes[NTF_BYTES_COUNT_OFFSET] = PAYLOAD_SIZE;
+   test_bytes[NTF_ID_OFFSET] = 0;
    m_test_subject->onSocketEvent(DriverEvent::DRIVER_DATA_RECV, test_bytes, DEFAULT_MESSAGE_SIZE);
 
 }
@@ -196,26 +196,16 @@ TEST_F(DataProviderSocketListenerFixture, fan_events_handling_tests)
    const uint8_t DEFAULT_MESSAGE_SIZE = NTF_HEADER_SIZE + PAYLOAD_SIZE;
    std::vector<uint8_t> test_bytes(DEFAULT_MESSAGE_SIZE, 0);
 
-   test_bytes[NTF_GROUP_OFFSET] = NTF_GROUP_FAN;
-   test_bytes[NTF_GROUP_BYTES_COUNT_OFFSET] = PAYLOAD_SIZE;
-   /**
-    * <b>scenario</b>: Invalid SUBCMD_TYPE received. <br>
-    * <b>expected</b>: Data not sent to main window.<br>
-    * ************************************************
-    */
-   EXPECT_CALL(m_window_mock, setFanState(_)).Times(0);
-   test_bytes[NTF_GROUP_SUBCMD_OFFSET] = 0;
-   test_bytes[NTF_GROUP_REQ_TYPE_OFFSET] = NTF_NTF;
-   m_test_subject->onSocketEvent(DriverEvent::DRIVER_DATA_RECV, test_bytes, DEFAULT_MESSAGE_SIZE);
-
+   test_bytes[NTF_ID_OFFSET] = NTF_FAN_STATE;
+   test_bytes[NTF_BYTES_COUNT_OFFSET] = PAYLOAD_SIZE;
    /**
     * <b>scenario</b>: Invalid REQ_TYPE received. <br>
     * <b>expected</b>: Data not sent to main window.<br>
     * ************************************************
     */
    EXPECT_CALL(m_window_mock, setFanState(_)).Times(0);
-   test_bytes[NTF_GROUP_SUBCMD_OFFSET] = NTF_FAN_STATE;
-   test_bytes[NTF_GROUP_REQ_TYPE_OFFSET] = 0;
+   test_bytes[NTF_ID_OFFSET] = NTF_FAN_STATE;
+   test_bytes[NTF_REQ_TYPE_OFFSET] = 0;
    m_test_subject->onSocketEvent(DriverEvent::DRIVER_DATA_RECV, test_bytes, DEFAULT_MESSAGE_SIZE);
 
    /**
@@ -224,8 +214,7 @@ TEST_F(DataProviderSocketListenerFixture, fan_events_handling_tests)
     * ************************************************
     */
    EXPECT_CALL(m_window_mock, setFanState(FAN_STATE_SUSPEND));
-   test_bytes[NTF_GROUP_SUBCMD_OFFSET] = NTF_FAN_STATE;
-   test_bytes[NTF_GROUP_REQ_TYPE_OFFSET] = NTF_NTF;
+   test_bytes[NTF_REQ_TYPE_OFFSET] = NTF_NTF;
    test_bytes[NTF_HEADER_SIZE] = FAN_STATE_SUSPEND;
    m_test_subject->onSocketEvent(DriverEvent::DRIVER_DATA_RECV, test_bytes, DEFAULT_MESSAGE_SIZE);
 }
@@ -236,17 +225,8 @@ TEST_F(DataProviderSocketListenerFixture, inputs_events_handling_tests)
    const uint8_t DEFAULT_MESSAGE_SIZE = NTF_HEADER_SIZE + PAYLOAD_SIZE;
    std::vector<uint8_t> test_bytes(DEFAULT_MESSAGE_SIZE, 0);
 
-   test_bytes[NTF_GROUP_OFFSET] = NTF_GROUP_INPUTS;
-   test_bytes[NTF_GROUP_BYTES_COUNT_OFFSET] = PAYLOAD_SIZE;
-   /**
-    * <b>scenario</b>: Invalid SUBCMD_TYPE received. <br>
-    * <b>expected</b>: Data not sent to main window.<br>
-    * ************************************************
-    */
-   EXPECT_CALL(m_window_mock, setInputState(_,_)).Times(0);
-   test_bytes[NTF_GROUP_SUBCMD_OFFSET] = 0;
-   test_bytes[NTF_GROUP_REQ_TYPE_OFFSET] = NTF_NTF;
-   m_test_subject->onSocketEvent(DriverEvent::DRIVER_DATA_RECV, test_bytes, DEFAULT_MESSAGE_SIZE);
+   test_bytes[NTF_ID_OFFSET] = NTF_INPUTS_STATE;
+   test_bytes[NTF_BYTES_COUNT_OFFSET] = PAYLOAD_SIZE;
 
    /**
     * <b>scenario</b>: Invalid REQ_TYPE received. <br>
@@ -254,8 +234,7 @@ TEST_F(DataProviderSocketListenerFixture, inputs_events_handling_tests)
     * ************************************************
     */
    EXPECT_CALL(m_window_mock, setInputState(_,_)).Times(0);
-   test_bytes[NTF_GROUP_SUBCMD_OFFSET] = NTF_INPUTS_STATE;
-   test_bytes[NTF_GROUP_REQ_TYPE_OFFSET] = 0;
+   test_bytes[NTF_REQ_TYPE_OFFSET] = 0;
    m_test_subject->onSocketEvent(DriverEvent::DRIVER_DATA_RECV, test_bytes, DEFAULT_MESSAGE_SIZE);
 
    /**
@@ -264,8 +243,7 @@ TEST_F(DataProviderSocketListenerFixture, inputs_events_handling_tests)
     * ************************************************
     */
    EXPECT_CALL(m_window_mock, setInputState(INPUT_BEDROOM_AC, INPUT_STATE_ACTIVE));
-   test_bytes[NTF_GROUP_SUBCMD_OFFSET] = NTF_INPUTS_STATE;
-   test_bytes[NTF_GROUP_REQ_TYPE_OFFSET] = NTF_NTF;
+   test_bytes[NTF_REQ_TYPE_OFFSET] = NTF_NTF;
    test_bytes[NTF_HEADER_SIZE] = INPUT_BEDROOM_AC;
    test_bytes[NTF_HEADER_SIZE + 1] = INPUT_STATE_ACTIVE;
    m_test_subject->onSocketEvent(DriverEvent::DRIVER_DATA_RECV, test_bytes, DEFAULT_MESSAGE_SIZE);
@@ -277,26 +255,15 @@ TEST_F(DataProviderSocketListenerFixture, env_events_handling_tests)
    const uint8_t DEFAULT_MESSAGE_SIZE = NTF_HEADER_SIZE + PAYLOAD_SIZE;
    std::vector<uint8_t> test_bytes(DEFAULT_MESSAGE_SIZE, 0);
 
-   test_bytes[NTF_GROUP_OFFSET] = NTF_GROUP_ENV;
-   test_bytes[NTF_GROUP_BYTES_COUNT_OFFSET] = PAYLOAD_SIZE;
-   /**
-    * <b>scenario</b>: Invalid SUBCMD_TYPE received. <br>
-    * <b>expected</b>: Data not sent to main window.<br>
-    * ************************************************
-    */
-   EXPECT_CALL(m_window_mock, setEnvState(_,_,_,_,_)).Times(0);
-   test_bytes[NTF_GROUP_SUBCMD_OFFSET] = 0;
-   test_bytes[NTF_GROUP_REQ_TYPE_OFFSET] = NTF_NTF;
-   m_test_subject->onSocketEvent(DriverEvent::DRIVER_DATA_RECV, test_bytes, DEFAULT_MESSAGE_SIZE);
-
+   test_bytes[NTF_ID_OFFSET] = NTF_ENV_SENSOR_DATA;
+   test_bytes[NTF_BYTES_COUNT_OFFSET] = PAYLOAD_SIZE;
    /**
     * <b>scenario</b>: Invalid REQ_TYPE received. <br>
     * <b>expected</b>: Data not sent to main window.<br>
     * ************************************************
     */
    EXPECT_CALL(m_window_mock, setEnvState(_,_,_,_,_)).Times(0);
-   test_bytes[NTF_GROUP_SUBCMD_OFFSET] = NTF_ENV_SENSOR_DATA;
-   test_bytes[NTF_GROUP_REQ_TYPE_OFFSET] = 0;
+   test_bytes[NTF_REQ_TYPE_OFFSET] = 0;
    m_test_subject->onSocketEvent(DriverEvent::DRIVER_DATA_RECV, test_bytes, DEFAULT_MESSAGE_SIZE);
 
    /**
@@ -305,8 +272,7 @@ TEST_F(DataProviderSocketListenerFixture, env_events_handling_tests)
     * ************************************************
     */
    EXPECT_CALL(m_window_mock, setEnvState(ENV_BEDROOM, 23, 5, 50, 2));
-   test_bytes[NTF_GROUP_SUBCMD_OFFSET] = NTF_ENV_SENSOR_DATA;
-   test_bytes[NTF_GROUP_REQ_TYPE_OFFSET] = NTF_NTF;
+   test_bytes[NTF_REQ_TYPE_OFFSET] = NTF_NTF;
    test_bytes[NTF_HEADER_SIZE] = ENV_BEDROOM;
    test_bytes[NTF_HEADER_SIZE + 1] = 0; /* sensor type - don't care */
    test_bytes[NTF_HEADER_SIZE + 2] = 50;

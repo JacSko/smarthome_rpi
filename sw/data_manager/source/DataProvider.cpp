@@ -87,19 +87,19 @@ void DataProvider::parse_message(const std::vector<uint8_t>& data, size_t size)
 {
    if (data.size() >= size)
    {
-      const uint8_t exp_payload_size = data[NTF_GROUP_BYTES_COUNT_OFFSET];
+      const uint8_t exp_payload_size = data[NTF_BYTES_COUNT_OFFSET];
       const uint8_t recv_payload_size = size - NTF_HEADER_SIZE;
       if (exp_payload_size == recv_payload_size)
       {
-         switch ((NTF_GROUP)data[NTF_GROUP_OFFSET])
+         switch ((NTF_CMD_ID)data[NTF_ID_OFFSET])
          {
-         case NTF_GROUP_INPUTS:
+         case NTF_INPUTS_STATE:
             parse_input_event(data, size);
             break;
-         case NTF_GROUP_ENV:
+         case NTF_ENV_SENSOR_DATA:
             parse_env_event(data, size);
             break;
-         case NTF_GROUP_FAN:
+         case NTF_FAN_STATE:
             parse_fan_event(data, size);
             break;
          default:
@@ -116,8 +116,7 @@ bool DataProvider::parse_env_event(const std::vector<uint8_t>& data, size_t size
 {
    bool result = false;
    logger_send(LOG_DATAPROV, __func__, "got env event");
-   if ((NTF_REQ_TYPE)data[NTF_GROUP_REQ_TYPE_OFFSET] == NTF_NTF &&
-       (NTF_ENV_SUBCMDS)data[NTF_GROUP_SUBCMD_OFFSET] == NTF_ENV_SENSOR_DATA)
+   if ((NTF_REQ_TYPE)data[NTF_REQ_TYPE_OFFSET] == NTF_NTF)
    {
       ENV_ITEM_ID id = (ENV_ITEM_ID)data[NTF_HEADER_SIZE];
       uint8_t hum_h = data[NTF_HEADER_SIZE + 2];
@@ -134,8 +133,7 @@ bool DataProvider::parse_input_event(const std::vector<uint8_t>& data, size_t si
 {
    bool result = false;
    logger_send(LOG_DATAPROV, __func__, "got env event");
-   if ((NTF_REQ_TYPE)data[NTF_GROUP_REQ_TYPE_OFFSET] == NTF_NTF &&
-       (NTF_INPUTS_SUBCMDS)data[NTF_GROUP_SUBCMD_OFFSET] == NTF_INPUTS_STATE)
+   if ((NTF_REQ_TYPE)data[NTF_REQ_TYPE_OFFSET] == NTF_NTF)
    {
       INPUT_ID id = (INPUT_ID) data[NTF_HEADER_SIZE];
       INPUT_STATE state = (INPUT_STATE) data[NTF_HEADER_SIZE + 1];
@@ -149,8 +147,7 @@ bool DataProvider::parse_fan_event(const std::vector<uint8_t>& data, size_t size
 {
    bool result = false;
    logger_send(LOG_DATAPROV, __func__, "fan ev recevied");
-   if ((NTF_REQ_TYPE)data[NTF_GROUP_REQ_TYPE_OFFSET] == NTF_NTF &&
-       (NTF_FAN_SUBCMDS)data[NTF_GROUP_SUBCMD_OFFSET] == NTF_FAN_STATE)
+   if ((NTF_REQ_TYPE)data[NTF_REQ_TYPE_OFFSET] == NTF_NTF)
    {
       FAN_STATE state = (FAN_STATE) data[NTF_HEADER_SIZE];
       logger_send(LOG_DATAPROV, __func__, "fan state %u", state);
