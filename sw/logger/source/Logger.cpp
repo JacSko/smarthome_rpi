@@ -86,7 +86,7 @@ void logger_send(LogGroup group, const char* prefix, const char* fmt, ...)
             std::time_t tt = std::chrono::system_clock::to_time_t ( currentTime );
             auto timeinfo = localtime (&tt);
             int idx = strftime (m_logger_buffer.data(),80,"[%F %H:%M:%S",timeinfo);
-            idx = sprintf(m_logger_buffer.data(), "%s:%03d] %s - ",m_logger_buffer.data(),(int)millis, prefix);
+            idx = sprintf(m_logger_buffer.data(), "%s:%03d] %s - %s - ",m_logger_buffer.data(),(int)millis, LOGGER_GROUPS[group].name, prefix);
             va_start(va, fmt);
             {
                 idx += vsprintf(m_logger_buffer.data() + idx, fmt, va);
@@ -112,7 +112,7 @@ void logger_send_if(uint8_t cond_bool, LogGroup group, const char* prefix, const
             std::time_t tt = std::chrono::system_clock::to_time_t ( currentTime );
             auto timeinfo = localtime (&tt);
             int idx = strftime (m_logger_buffer.data(),80,"[%F %H:%M:%S",timeinfo);
-            idx = sprintf(m_logger_buffer.data(), "%s:%03d] %s - ",m_logger_buffer.data(),(int)millis, prefix);
+            idx = sprintf(m_logger_buffer.data(), "%s:%03d] %s - %s - ",m_logger_buffer.data(),(int)millis, LOGGER_GROUPS[group].name, prefix);
             va_start(va, fmt);
             {
                idx = vsprintf(m_logger_buffer.data() + idx, fmt, va);
