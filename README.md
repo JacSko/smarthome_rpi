@@ -3,6 +3,9 @@
 ## Description
 Application is GUI client for [SmartHome_CoreApplication](https://github.com/JacSko/SmartHome_CoreApplication).
 It is parsing the received data from CoreApplication, than presents it on GUI.
+
+![image](https://user-images.githubusercontent.com/47041583/107795495-0054b380-6d59-11eb-81cc-b71e6e31b8a3.png)
+
 ![github_core_diagram](https://user-images.githubusercontent.com/47041583/107790916-a00f4300-6d53-11eb-9905-4ffcf12df80a.png)
 
 ## Details
